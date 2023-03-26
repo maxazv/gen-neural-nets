@@ -64,7 +64,7 @@ parent_pop = 5
 brain_shape = (2, 9, 9, 2)
 population = [Agent(brain_shape) for _ in range(gen_pop)]
 dummy_game = Game(0, 200, res=1/50)
-evolve_iter = 1000
+evolve_iter = 500
 
 first_ranking = eval_gen(population, dummy_game, 100)
 first_ranking = np.array(first_ranking[:parent_pop])
