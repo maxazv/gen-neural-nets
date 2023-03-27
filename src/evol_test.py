@@ -3,6 +3,7 @@ import numpy as np
 
 from agent import Agent
 from game import Game
+from evolution import Evolution
 
 
 def play(velx, vely, game, iter=500):
@@ -58,7 +59,7 @@ def evolve(population, game, parent_pop, it, game_its=500):
 
 
 
-
+'''
 gen_pop = 20
 parent_pop = 5
 brain_shape = (2, 9, 9, 2)
@@ -74,3 +75,24 @@ evolved_pop = evolve(population, dummy_game, parent_pop, evolve_iter, game_its=1
 last_ranking = eval_gen(evolved_pop, dummy_game, 100)
 last_ranking = np.array(last_ranking)
 print(f'First:\n {first_ranking} \n\n\nLast:\n {last_ranking}')
+'''
+
+
+gen_pop = 20
+parent_pop = 5
+brain_shape = (2, 9, 9, 2)
+population = [Agent(brain_shape) for _ in range(gen_pop)]
+evolve_iter = 20
+
+evol = Evolution(population)
+
+dummy_game = Game.rand_inst()
+dummy_game.iter = 100
+
+ranking = evol.eval_gen(dummy_game)
+print(f'first: \n{np.array(ranking[:parent_pop])} \n\n\n')
+
+evol.evolve(evolve_iter, parent_pop, 100)
+
+ranking = evol.eval_gen(dummy_game)
+print(f'last:\n{np.array(ranking[:parent_pop])}')
