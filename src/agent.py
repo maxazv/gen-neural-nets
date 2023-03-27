@@ -2,9 +2,16 @@ import numpy as np
 from nn import NeuralNet
 
 class Agent:
-    def __init__(self, shape) -> None:
+    def __init__(self, shape, wmut_rate=.3, bmut_rate=.3, w_freq=.6, b_freq=1) -> None:
         self.__brain = NeuralNet(shape)
+
         self.__score = 0
+
+        self.mut_w_rate = wmut_rate
+        self.mut_b_rate = bmut_rate
+
+        self.w_freq = w_freq
+        self.b_freq = b_freq
 
 
     @staticmethod
@@ -16,17 +23,11 @@ class Agent:
 
         for i, w in enumerate(child.__brain.weights()):
             bound = np.random.uniform(high=w.size)
-            tmp = np.zeros(w.shape)
 
-            for k in range(w.shape[0]):
-                for l in range(w.shape[1]):
+            ind_arr = np.arange(w.size).reshape(w.shape)
+            w = np.where(ind_arr < bound, weights_a[i], weights_b[i])
 
-                    if k * w.shape[1] + l < bound:
-                        tmp[k][l] = weights_a[i][k][l]
-                    else:
-                        tmp[k][l] = weights_b[i][k][l]
-
-            child.__brain.set_weights(i, tmp)
+            child.__brain.set_weights(i, w)
 
         for i, b in enumerate(child.__brain.biases()):
             bound = int(np.random.uniform(high=b.size))
@@ -39,13 +40,19 @@ class Agent:
         return child
 
 
-    # TODO implement basic mutation
-    def mutate(self, rate, freq):
-        for w in self.__brain.weights():
-            pass
+    def mutate(self, lr, low=-1, high=1):
 
-        for b in self.__brain.biases():
-            pass
+        for i, w in enumerate(self.__brain.weights()):
+            mut = np.random.uniform(low, high, size=w.size).reshape(w.shape)
+            w += lr*self.w_freq*mut
+
+            self.__brain.set_weights(i, w)
+
+        for i, b in enumerate(self.__brain.biases()):
+            mut = np.random.uniform(low, high, size=b.size)
+            b += lr*self.b_freq*mut
+
+            self.__brain.set_biases(i, b)
 
 
     def act(self, input):

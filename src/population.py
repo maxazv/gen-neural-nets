@@ -12,7 +12,7 @@ def play(velx, vely, game, iter=500):
     for i in range(iter):
         game.iteration()
         tmp = game.dist()
-        if tmp < dist: dist = tmp
+        dist = tmp if (tmp < dist) else dist
 
     game.reset()
     return dist
@@ -32,7 +32,7 @@ def eval_gen(pop, game, game_its):
     return ranking
 
 
-def new_gen(ranking, rate=.3, freq=.2):
+def new_gen(ranking, lr):
     new_gen = []
 
     # all possible pairs of the top ranking agents from last gen
@@ -42,17 +42,17 @@ def new_gen(ranking, rate=.3, freq=.2):
     # get new generation via crossover of the parent pairs
     for (p1, p2) in parent_pairs:
         child = Agent.crossover(p1, p2)
-        child.mutate(rate, freq)
+        child.mutate(lr)
         new_gen.append(child)
 
     return new_gen
 
 
 def evolve(population, game, parent_pop, it, game_its=500):
-    for _ in range(it):
+    for i in range(it):
         ranking = eval_gen(population, game, game_its)
         ranking = np.array(ranking[:parent_pop])
-        population = new_gen(ranking[:, 2])
+        population = new_gen(ranking[:, 2], np.sqrt(it-i+1))
 
     return population
 
@@ -64,7 +64,7 @@ parent_pop = 5
 brain_shape = (2, 9, 9, 2)
 population = [Agent(brain_shape) for _ in range(gen_pop)]
 dummy_game = Game(0, 200, res=1/50)
-evolve_iter = 500
+evolve_iter = 20
 
 first_ranking = eval_gen(population, dummy_game, 100)
 first_ranking = np.array(first_ranking[:parent_pop])
