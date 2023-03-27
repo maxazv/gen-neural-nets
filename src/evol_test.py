@@ -18,11 +18,11 @@ dummy_game = Game.rand_inst()
 dummy_game.iter = 100
 
 ranking = evol.eval_gen(dummy_game)
-print(f'first: \n{np.array(ranking[:parent_pop])} \n\n\n')
+print(f'first: \n{heapq.nsmallest(parent_pop, ranking)} \n')
 
 evol.evolve(evolve_iter, parent_pop, 100)
 
 ranking = evol.eval_gen(dummy_game)
-print(f'last:\n{np.array(ranking[:parent_pop])}')
+print(f'last:\n{heapq.nsmallest(parent_pop, ranking)}')
 
 #print('\n', len(Evolution.new_gen(np.array(ranking[:parent_pop])[:, 2], 1)))

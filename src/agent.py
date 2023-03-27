@@ -2,20 +2,16 @@ import numpy as np
 from nn import NeuralNet
 
 class Agent:
-    def __init__(self, shape, wmut_rate=.2, bmut_rate=.6, w_freq=.8, b_freq=2) -> None:
+    def __init__(self, shape, mut_rate=.5) -> None:
         self.__brain = NeuralNet(shape)
 
         self.__score = 0
 
-        self.mut_w_rate = wmut_rate
-        self.mut_b_rate = bmut_rate
-
-        self.w_freq = w_freq
-        self.b_freq = b_freq
+        self.mut_rate = mut_rate
 
 
     @staticmethod
-    def crossover(agentA, agentB, ratio=.5):
+    def crossover(agentA, agentB):
         child = Agent(agentA.__brain.shape())
 
         weights_a, weights_b = agentA.__brain.weights(), agentB.__brain.weights()
@@ -41,16 +37,18 @@ class Agent:
 
 
     def mutate(self, lr, low=-1, high=1):
-
+        
         for i, w in enumerate(self.__brain.weights()):
+            prob = np.random.uniform(size=w.size).reshape(w.shape)
             mut = np.random.uniform(low, high, size=w.size).reshape(w.shape)
-            w += lr*self.w_freq*mut
+            w += lr*np.where(prob < self.mut_rate, mut, 0)
 
             self.__brain.set_weights(i, w)
 
         for i, b in enumerate(self.__brain.biases()):
-            mut = np.random.uniform(low, high, size=b.size)
-            b += lr*self.b_freq*mut
+            prob = np.random.uniform(size=b.size).reshape(b.shape)
+            mut = np.random.uniform(low, high, size=b.size).reshape(b.shape)
+            b += lr*np.where(prob < self.mut_rate, mut, 0)
 
             self.__brain.set_biases(i, b)
 

@@ -46,9 +46,9 @@ class Evolution:
             game.iter = game_it
 
             ranking = self.eval_gen(game)
-            ranking = np.array(ranking[:parent_pop])
+            ranking = np.array(heapq.nsmallest(parent_pop, ranking))
 
-            self.__pop = Evolution.new_gen(ranking[:, 2], func(it-i+1))
+            self.__pop = Evolution.new_gen(ranking[:, 2], lr=func(it-i+1)) #+ ranking[:, 2].tolist()
 
 
     def pop(self):
