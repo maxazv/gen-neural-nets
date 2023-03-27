@@ -6,13 +6,14 @@ class NeuralNet:
         self.__num_layers = len(self.__shape)
         self.__biases = [np.random.uniform(size=d)*bias_fact for d in self.__shape]
         self.__weights = [np.random.uniform(
-                        size=(self.__shape[i], self.__shape[i-1])) for i in range(1, len(self.__shape))
-                        ]
+                          size=(self.__shape[i], self.__shape[i-1])) for i in range(1, len(self.__shape))
+                         ]
         
     @staticmethod
     def sigmoid_arr(arr):
         return 1 / (1 + np.exp(-arr))
     
+    @staticmethod
     def reLU(arr):
         return (np.maximum(0, arr))
 

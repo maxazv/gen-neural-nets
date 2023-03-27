@@ -2,7 +2,7 @@ import numpy as np
 from nn import NeuralNet
 
 class Agent:
-    def __init__(self, shape, wmut_rate=.3, bmut_rate=.3, w_freq=.6, b_freq=1.4) -> None:
+    def __init__(self, shape, wmut_rate=.2, bmut_rate=.6, w_freq=.8, b_freq=2) -> None:
         self.__brain = NeuralNet(shape)
 
         self.__score = 0
